@@ -59,9 +59,11 @@ export async function deleteImage(imageId: number) {
 export async function searchImages(keyword: string = "") {
   await new Promise((resolve) => setTimeout(resolve, 300));
 
-  if (!keyword) return mockImagesDB;
+  if (!keyword) return [...mockImagesDB];
 
-  const images = mockImagesDB.filter((image) => image.name.includes(keyword));
+  const images = mockImagesDB.filter((image) =>
+    image.name.toLowerCase().includes(keyword.toLowerCase())
+  );
 
   return images;
 }
