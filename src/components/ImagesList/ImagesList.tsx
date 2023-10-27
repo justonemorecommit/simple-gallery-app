@@ -9,7 +9,7 @@ type ImagesListProps = {
 
 export function ImagesList({ images, onDelete }: ImagesListProps) {
   return (
-    <div className="grid lg:grid-cols-[repeat(3,1fr)] md:grid-cols-[repeat(2,1fr)] xs:grid-cols-[repeat(1,1fr)]">
+    <div className="grid lg:grid-cols-[repeat(3,1fr)] md:grid-cols-[repeat(2,1fr)] xs:grid-cols-[repeat(1,1fr)] gap-1">
       {images.map((image) => (
         <ImageItem
           key={image.id}

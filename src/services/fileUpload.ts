@@ -15,23 +15,24 @@ const getNextId = (() => {
 })();
 
 function generateRandomImage() {
+  const id = getNextId();
   return {
-    id: getNextId(),
-    url: "https://picsum.photos/200/300",
-    name: "Random Name",
+    id,
+    url: "https://picsum.photos/id/" + id + "/200/300",
+    name: "Random image " + id,
     width: 200,
     height: 300,
   };
 }
 
-const mockImagesDB: Image[] = [...Array(30)].map(() => generateRandomImage());
+const mockImagesDB: Image[] = [...Array(12)].map(() => generateRandomImage());
 
 export async function uploadFile(file: File) {
   await new Promise((resolve) => setTimeout(resolve, 300));
 
   const image: Image = {
     id: getNextId(),
-    url: "https://picsum.photos/200/300",
+    url: "https://picsum.photos/200/120",
     name: file.name,
     width: 200,
     height: 300,

@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from "react";
+import { useSearchParams, useNavigate } from "react-router-dom";
+
 import { FileUpload } from "./components/FileInput/FileUpload";
 import {
   uploadFile,
@@ -13,7 +15,12 @@ import "./App.css";
 
 function App() {
   const [images, setImages] = useState<Image[]>([]);
-  const [keyword, setKeyword] = useState("");
+  const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
+  const locationKeyword = searchParams.get("keyword");
+
+  const [keyword, setKeyword] = useState(locationKeyword);
+  const [debouncedKeyword, setDebouncedKeyword] = useState(locationKeyword);
 
   useEffect(() => {
     (async () => {
@@ -21,6 +28,24 @@ function App() {
       setImages(images);
     })();
   }, []);
+
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      setDebouncedKeyword(keyword);
+      navigate(`?keyword=${keyword}`);
+    }, 500);
+
+    return () => {
+      clearTimeout(timeoutId);
+    };
+  }, [keyword]);
+
+  useEffect(() => {
+    (async () => {
+      const images = await searchImages(debouncedKeyword);
+      setImages(images);
+    })();
+  }, [debouncedKeyword]);
 
   async function handleUploadChange(
     event: React.ChangeEvent<HTMLInputElement>
@@ -33,7 +58,6 @@ function App() {
 
   async function handleKeywordChange(e: React.ChangeEvent<HTMLInputElement>) {
     setKeyword(e.target.value);
-    const images = await searchImages(e.target.value);
 
     setImages(images);
   }
@@ -49,22 +73,18 @@ function App() {
 
   return (
     <div className="p-3">
-      <header className="flex items-center">
+      <header className="flex items-center mb-5">
         <div>
           <TextInput
             name="keyword"
             value={keyword}
+            placeholder="Search images"
             onChange={handleKeywordChange}
           />
         </div>
 
         <div className="ml-auto">
-          <FileUpload
-            label="Upload"
-            id="inputImageUpload"
-            helperText="SVG, PNG, JPG or GIF (MAX. 800x400px)."
-            onChange={handleUploadChange}
-          />
+          <FileUpload id="inputImageUpload" onChange={handleUploadChange} />
         </div>
       </header>
       <main>
